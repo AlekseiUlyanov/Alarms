@@ -18,8 +18,8 @@ Ext.define('Store.Alarms.Module', {
         me.initialized = true;
 
         // Временно используем хардкод
-        window.ALARMS_LOGIN = 'office@gkstolica.ru';
-        window.ALARMS_PASSWORD = 'BmJBDF';
+        window.ALARMS_LOGIN = 'hardcode_login';
+        window.ALARMS_PASSWORD = 'hardcode_password';
 
         me.realInit();
     },
