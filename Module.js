@@ -114,7 +114,7 @@ Ext.define('Store.Alarms.Module', {
             Ext.log('Alarms: не удалось загрузить config.js');
         };
         document.head.appendChild(script);
-    }
+    },
 
     /**
      * Настоящая инициализация, которая выполняется после того, как логин/пароль гарантированно доступны.
