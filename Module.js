@@ -90,29 +90,38 @@ Ext.define('Store.Alarms.Module', {
     loadConfig: function () {
         var me = this;
         var baseUrl = me.getBaseUrl();
+        console.log('Alarms: baseUrl =', baseUrl); // Что тут?
 
         if (!baseUrl) {
-            Ext.log('Alarms: не удалось определить базовый URL для загрузки config.js');
+            Ext.log('Alarms: baseUrl пустой');
             return;
         }
 
+        var scriptUrl = baseUrl + 'config.js';
+        console.log('Alarms: пытаюсь загрузить config.js по адресу', scriptUrl);
+
         var script = document.createElement('script');
-        script.src = baseUrl + 'config.js';
+        script.src = scriptUrl;
         script.onload = function () {
+            console.log('Alarms: config.js успешно загружен');
             me.configLoaded = true;
             me.realInit();
         };
+        console.log('config loaded');
+
         script.onerror = function () {
+            console.log('Alarms: ошибка загрузки config.js');
             Ext.log('Alarms: не удалось загрузить config.js');
-            // Можно показать сообщение пользователю, но для простоты просто логируем
         };
         document.head.appendChild(script);
-    },
+    }
 
     /**
      * Настоящая инициализация, которая выполняется после того, как логин/пароль гарантированно доступны.
      */
     realInit: function () {
+        console.log('realInit started');
+
         var me = this;
 
         if (!me.configLoaded || !window.ALARMS_LOGIN || !window.ALARMS_PASSWORD) {
