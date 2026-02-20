@@ -69,14 +69,35 @@ Ext.define('Store.Alarms.Module', {
     },
 
     /**
+     * Определяет базовый URL, откуда загружен текущий скрипт (Module.js).
+     * @return {String} Базовый URL (например, "https://raw.githubusercontent.com/user/repo/branch/")
+     */
+    getBaseUrl: function() {
+        var scripts = document.getElementsByTagName('script');
+        for (var i = 0; i < scripts.length; i++) {
+            var src = scripts[i].src;
+            if (src && src.indexOf('Module.js') !== -1) {
+                return src.substring(0, src.lastIndexOf('/') + 1);
+            }
+        }
+        // Если не нашли (например, скрипт загружен не через src), возвращаем пустую строку
+        return '';
+    },
+
+    /**
      * Загрузка конфигурационного файла config.js
      */
     loadConfig: function () {
         var me = this;
+        var baseUrl = me.getBaseUrl();
 
-        // Создаём скрипт для загрузки config.js
+        if (!baseUrl) {
+            Ext.log('Alarms: не удалось определить базовый URL для загрузки config.js');
+            return;
+        }
+
         var script = document.createElement('script');
-        script.src = 'config.js'; // предполагается, что файл лежит рядом с Module.js
+        script.src = baseUrl + 'config.js';
         script.onload = function () {
             me.configLoaded = true;
             me.realInit();
@@ -299,11 +320,7 @@ Ext.define('Store.Alarms.Module', {
     getMainPanel: function () {
         var me = this;
         // Ищем вкладку в skeleton.navigation, которая является нашим navTab.
-        // Можно сохранить ссылку при создании, но для простоты используем известный способ:
-        // navTab.map_frame было установлено, но как получить navTab? Можно хранить в модуле.
-        // Лучше сохранить ссылку в модуле.
         if (!me.navTab) {
-            // Если не сохранили, попытаемся найти по заголовку (ненадёжно, но для примера)
             var items = skeleton.navigation.items;
             for (var i = 0; i < items.length; i++) {
                 if (items[i].title === 'Мониторинг неполадок') {
@@ -317,7 +334,6 @@ Ext.define('Store.Alarms.Module', {
 
     /**
      * Очистка ресурсов (таймер) – может быть вызвано системой при выгрузке расширения.
-     * Хотя в PILOT расширения обычно не выгружаются, добавим для корректности.
      */
     destroy: function () {
         var me = this;
